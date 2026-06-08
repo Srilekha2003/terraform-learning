@@ -3,6 +3,10 @@ terraform {
     google = {
       source = "hashicorp/google"
     }
+
+    local = {
+      source = "hashicorp/local"
+    }
   }
 }
 
@@ -14,12 +18,15 @@ data "google_project" "current" {
   project_id = "internal-sandbox-446612"
 }
 
-output "project_id" {
-  value = data.google_project.current.project_id
-}
+resource "local_file" "project_info" {
 
-output "project_number" {
-  value = data.google_project.current.number
+  filename = "${path.module}/project.txt"
+
+  content = <<EOF
+Project ID: ${data.google_project.current.project_id}
+Project Name: ${data.google_project.current.name}
+Project Number: ${data.google_project.current.number}
+EOF
 }
 
 output "project_name" {
